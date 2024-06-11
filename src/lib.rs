@@ -10,10 +10,19 @@ pub struct Frame<P: Pixel, C: Deref<Target = [P::Subpixel]>> {
     image: ImageBuffer<P, C>,
 }
 impl<P: Pixel, C: Deref<Target = [P::Subpixel]>> Frame<P, C> {
-    ///Create a new frame
+    ///Create a new `Frame`
     pub fn new(timestamp: Duration, image: ImageBuffer<P, C>) -> Frame<P, C> {
         Frame::<P, C> { timestamp, image }
     }
+	///Get the image associated with this `Frame`. This method will consume the `Frame`
+	///struct to avoid copying image data
+	pub fn to_image(self) -> ImageBuffer<P,C> {
+		self.image
+	}
+	///Get the image associated with this `Frame`
+	pub fn get_timestamp(&self) -> Duration {
+		self.timestamp
+	}
 }
 
 ///A source of frames (such as a camera)
