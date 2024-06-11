@@ -11,7 +11,7 @@ pub struct Frame<P: Pixel, C: Deref<Target = [P::Subpixel]>> {
 }
 impl<P: Pixel, C: Deref<Target = [P::Subpixel]>> Frame<P, C> {
     ///Create a new frame
-    fn new(timestamp: Duration, image: ImageBuffer<P, C>) -> Frame<P, C> {
+    pub fn new(timestamp: Duration, image: ImageBuffer<P, C>) -> Frame<P, C> {
         Frame::<P, C> { timestamp, image }
     }
 }
@@ -25,17 +25,15 @@ pub trait FrameSource {
     ///The [FrameStream] that will stream frames from this source
     type Stream: FrameStream;
     ///Set the exposure time
-    fn set_exposure(&self, exposure: f64);
+    fn set_exposure(&mut self, exposure: f64);
     ///Get the exposure time
     fn get_exposure(&self) -> f64;
     ///Set the resolution
-    fn set_resolution(&self, resolution: [usize; 2]);
+    fn set_resolution(&mut self, resolution: [usize; 2]);
     ///Get the resolution
     fn get_resolution(&self) -> [usize; 2];
     ///Start streaming frames. The frames will be placed into the provided [Sender].
-    fn start(
-        sender: Sender<Frame<Self::PixelType, Self::ImageContainerType>>,
-    ) -> impl FrameStream<PixelType = Self::PixelType, ImageContainerType = Self::ImageContainerType>;
+    fn start(sender: Sender<Frame<Self::PixelType, Self::ImageContainerType>>) -> Self::Stream;
 }
 
 ///A running stream of frames
@@ -45,7 +43,7 @@ pub trait FrameStream {
     ///Underlying container holding the pixel data
     type ImageContainerType: Deref<Target = [<Self::PixelType as Pixel>::Subpixel]>;
     ///Stop streaming
-    fn stop(&self);
+    fn stop(self);
     ///Change the destination of the frame stream. New frames will be placed into the provided [Sender]
     fn change_consumer(
         &mut self,
