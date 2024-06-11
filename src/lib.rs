@@ -14,15 +14,15 @@ impl<P: Pixel, C: Deref<Target = [P::Subpixel]>> Frame<P, C> {
     pub fn new(timestamp: Duration, image: ImageBuffer<P, C>) -> Frame<P, C> {
         Frame::<P, C> { timestamp, image }
     }
-	///Get the image associated with this `Frame`. This method will consume the `Frame`
-	///struct to avoid copying image data
-	pub fn to_image(self) -> ImageBuffer<P,C> {
-		self.image
-	}
-	///Get the image associated with this `Frame`
-	pub fn get_timestamp(&self) -> Duration {
-		self.timestamp
-	}
+    ///Get the image associated with this `Frame`. This method will consume the `Frame`
+    ///struct to avoid copying image data
+    pub fn to_image(self) -> ImageBuffer<P, C> {
+        self.image
+    }
+    ///Get the image associated with this `Frame`
+    pub fn get_timestamp(&self) -> Duration {
+        self.timestamp
+    }
 }
 
 ///A source of frames (such as a camera)
@@ -42,7 +42,10 @@ pub trait FrameSource {
     ///Get the resolution
     fn get_resolution(&self) -> [usize; 2];
     ///Start streaming frames. The frames will be placed into the provided [Sender].
-    fn start(sender: Sender<Frame<Self::PixelType, Self::ImageContainerType>>) -> Self::Stream;
+    fn start(
+        &self,
+        sender: Sender<Frame<Self::PixelType, Self::ImageContainerType>>,
+    ) -> Self::Stream;
 }
 
 ///A running stream of frames
