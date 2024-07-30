@@ -2,6 +2,9 @@ use image::DynamicImage;
 use std::sync::mpsc::Sender;
 use std::time::Duration;
 
+//re-export image to our callers
+pub use image;
+
 ///Struct to represent a single frame. `P` and `C` are type parameters of the underlying
 ///[ImageBuffer]
 pub struct Frame {
